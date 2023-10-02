@@ -1,4 +1,3 @@
-import { version } from "./package.json";
 import { defineConfig } from "@diba1013/tscz";
 
 const NAME = "ts";
@@ -17,8 +16,4 @@ export default defineConfig({
 			output: ["cjs", "esm", "dts"],
 		},
 	],
-	define: {
-		__NAME__: NAME,
-		__VERSION__: version,
-	},
 });

@@ -2,15 +2,20 @@
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
 		"baseUrl": ".",
-		"lib": ["ESNext"],
+		"jsx": "preserve",
+		"jsxImportSource": "solid-js",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
 		"paths": {
 			"@/*": ["src/*"]
 		}
 	},
 	"include": [
 		"src/**/*.ts",
+		"src/**/*.tsx",
 		"test/**/*.ts",
+		"test/**/*.tsx",
 		"tscz.config.ts",
-		"vitest.config.ts"
+		"vitest.config.ts",
+		"test/store.spec.tsx"
 	]
 }

@@ -1,3 +1,4 @@
+import solid from "vite-plugin-solid";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -6,16 +7,19 @@ export default defineConfig({
 			"@": "/src",
 		},
 	},
+	build: {
+		target: "esnext",
+	},
+	plugins: [solid()],
 	test: {
-		environment: "node",
-		restoreMocks: true,
-		coverage: {
-			provider: "v8",
-			enabled: true,
-			all: true,
-			include: ["src/**/*.ts"],
-			exclude: ["src/**/*.types.ts"],
-			reporter: ["html", "text-summary", "lcovonly"],
+		server: {
+			deps: {
+				inline: [/solid-js/],
+				// registerNodeLoader: false,
+			},
 		},
+		environment: "happy-dom",
+		restoreMocks: true,
+		testTransformMode: { web: ["/.[jt]sx?$/"] },
 	},
 });
