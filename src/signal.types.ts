@@ -32,7 +32,13 @@ export type WritableSignal<T> = {
 
 	get(): T;
 
-	set(value: T | WritableSignalSetter<T>): T;
+	set(value: WritableSignalSetter<T>): T;
 };
 
-export type WritableSignalSetter<T> = (previous: T) => T;
+export type WritableSignalSetter<T> =
+	| {
+			value: T;
+	  }
+	| {
+			get: (previous?: T) => T;
+	  };

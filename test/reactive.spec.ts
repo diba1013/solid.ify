@@ -19,7 +19,9 @@ describe("foo", () => {
 			return { cut, watcher };
 		});
 
-		cut.set("Hello");
+		cut.set({
+			value: "Hello",
+		});
 
 		expect(watcher).toHaveBeenCalledTimes(2);
 	});

@@ -17,8 +17,10 @@ const useStore = defineStore("test", () => {
 			},
 		}),
 
-		change(name: string) {
-			text.set(name);
+		change(value: string) {
+			text.set({
+				value,
+			});
 		},
 	};
 });

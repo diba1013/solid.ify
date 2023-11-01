@@ -12,6 +12,7 @@ export default defineConfig({
 	},
 	plugins: [solid()],
 	test: {
+		testTransformMode: { web: ["/.[jt]sx?$/"] },
 		server: {
 			deps: {
 				inline: [/solid-js/],
@@ -20,6 +21,12 @@ export default defineConfig({
 		},
 		environment: "happy-dom",
 		restoreMocks: true,
-		testTransformMode: { web: ["/.[jt]sx?$/"] },
+		coverage: {
+			all: true,
+			provider: "v8",
+			include: ["src/**/*.ts"],
+			exclude: ["src/**/*.types.ts"],
+			reporter: ["html", "text-summary", "lcovonly"],
+		},
 	},
 });

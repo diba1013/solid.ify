@@ -10,10 +10,15 @@ import {
 } from "./signal.types";
 import { createSignal } from "solid-js";
 
-function isSetter<T>(
-	value: T | WritableSignalSetter<T>,
-): value is WritableSignalSetter<T> {
-	return typeof value === "function";
+function update<T>(setter: WritableSignalSetter<T>, previous?: T): T {
+	if ("value" in setter) {
+		return setter.value;
+	}
+	if ("get" in setter) {
+		return setter.get(previous);
+	}
+	// Ignore undefined
+	return previous as T;
 }
 
 function write<T>(
@@ -23,19 +28,15 @@ function write<T>(
 	return {
 		[SIGNAL_SYMBOL]: id,
 
-		get(): T {
+		get: (): T => {
 			return write.get();
 		},
 
-		set(value: T | WritableSignalSetter<T>) {
-			if (isSetter(value)) {
-				const update = value(write.get());
-				write.set(update);
-				return update;
-			} else {
-				write.set(value);
-				return value;
-			}
+		set(setter: WritableSignalSetter<T>): T {
+			// Might need to call get within untrack?
+			const next = update(setter, write.get());
+			write.set(next);
+			return next;
 		},
 	};
 }
@@ -61,8 +62,14 @@ function signal<T>(initial?: T, id = Symbol()): WritableSignal<T | undefined> {
 	return {
 		[SIGNAL_SYMBOL]: id,
 
-		get,
-		set,
+		get: (): T | undefined => {
+			return get();
+		},
+		set: (setter: WritableSignalSetter<T>): T => {
+			return set((value): T => {
+				return update(setter, value);
+			});
+		},
 	};
 }
 
@@ -98,30 +105,4 @@ export function wrap<T>(
 	}
 
 	return signal();
-}
-
-export function get<T>(signal: T | ReadableSignal<T>): T {
-	if (signal === null || signal === undefined) {
-		return signal;
-	}
-	if (typeof signal !== "object") {
-		return signal;
-	}
-	if ("get" in signal) {
-		return signal.get();
-	}
-	return signal;
-}
-
-export function set<T, R>(signal: WritableSignal<T> | R, value: T): T {
-	if (signal === null || signal === undefined) {
-		return value;
-	}
-	if (typeof signal !== "object") {
-		return value;
-	}
-	if ("set" in signal) {
-		return signal.set(value);
-	}
-	return value;
 }

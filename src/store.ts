@@ -1,5 +1,4 @@
-import { get, set } from "@/signal";
-import { SIGNAL_SYMBOL } from "@/signal.types";
+import { get, is, set } from "@/compute";
 import {
 	STORE_SYMBOL,
 	type Store,
@@ -16,48 +15,37 @@ export const Stores = createContext<StoreContext<any>>({
 });
 
 /**
- * Ensures that typescript can properly infer wrapped signal access for properties
- */
-type WrappedStore<Stores extends object> = Store<{
-	[K in keyof Stores]: Stores[K] & {
-		[SIGNAL_SYMBOL]?: unknown;
-	};
-}>;
-
-/**
  * Creates a store proxy handler for unwrapping signal properties.
  *
  * @returns A wrapped store proxy handler
  */
-function store<T extends object>(): ProxyHandler<WrappedStore<T>> {
-	return {
-		get<Key extends keyof Store<T>>(
-			target: WrappedStore<T>,
-			p: string | symbol,
-		) {
+export function store<T extends object>(instance: T): Store<T> {
+	return new Proxy(instance as Store<T>, {
+		get<Key extends keyof Store<T>>(target: Store<T>, p: string | symbol) {
 			const key = p as Key;
 			const property = target[key];
-			// Do not modify not owned properties, though might want to handle 'get' first?
-			if (property[SIGNAL_SYMBOL] === undefined) {
-				return property;
+			if (is(property)) {
+				return get(property);
 			}
-			return get(property);
+			return property;
 		},
 
-		set<Key extends keyof WrappedStore<T>>(
-			target: WrappedStore<T>,
+		set<Key extends keyof Store<T>>(
+			target: Store<T>,
 			p: string | symbol,
-			newValue: T[Key],
+			newValue: Store<T>[Key],
 		) {
 			const key = p as Key;
 			const property = target[key];
-			if (property[SIGNAL_SYMBOL] === undefined) {
-				return false;
+			if (is(property)) {
+				set(property, {
+					value: newValue,
+				});
+				return true;
 			}
-			set(property, newValue);
-			return true;
+			return false;
 		},
-	};
+	});
 }
 
 export function defineStore<Context extends object, T extends object>(
@@ -79,12 +67,12 @@ export function defineStore<Context extends object, T extends object>(
 			try {
 				// This is now a store wrapper
 				const instance = factory(context) as Store<T>;
-				stores[id] = new Proxy(instance, store());
+				stores[id] = store(instance);
 			} catch (error) {
 				console.error(`Could not instantiate store '${id}'.`, error);
 				// This is a fallback to silently replace
 				const fallback = {} as Store<T>;
-				stores[id] = new Proxy(fallback, store());
+				stores[id] = store(fallback);
 			}
 		}
 		return stores[id] as Store<T>;
