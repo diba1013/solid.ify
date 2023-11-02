@@ -1,4 +1,5 @@
-import { wrap } from "@/signal";
+import { is, wrap } from "@/signal";
+import { ReadableSignal, WritableSignal } from "@/signal.types";
 import { describe, expect, it } from "vitest";
 
 describe("wrap", () => {
@@ -70,5 +71,75 @@ describe("wrap", () => {
 		});
 
 		expect(cut.get()).is.eq("0");
+	});
+});
+
+describe("is", () => {
+	it("should return false for non signal", () => {
+		expect(is("")).is.false;
+		expect(is("1")).is.false;
+		expect(is(0)).is.false;
+	});
+
+	it("should return false without proper signal symbol", () => {
+		// mimic signal as close as possible
+		const read = {
+			get: () => "",
+		} as unknown as ReadableSignal<string>;
+		const write = {
+			get: () => "",
+			set: () => "",
+		} as unknown as WritableSignal<string>;
+
+		expect(is<string, ReadableSignal<string>>(read, "get")).is.false;
+		expect(is<string, ReadableSignal<string>>(write, "get")).is.false;
+		expect(is<string, WritableSignal<string>>(write, "set")).is.false;
+	});
+
+	it("should return true with undefined writable signal", () => {
+		const signal = wrap<string>();
+
+		expect(is(signal)).is.true;
+		expect(is(signal, "get")).is.true;
+		expect(is(signal, "set")).is.true;
+	});
+
+	it("should return true for predefined writable signal", () => {
+		const signal = wrap({
+			value: "",
+		});
+
+		expect(is(signal)).is.true;
+		expect(is(signal, "get")).is.true;
+		expect(is(signal, "set")).is.true;
+	});
+
+	it("should return true for computed signal", () => {
+		const signal = wrap({
+			get: () => {
+				return "";
+			},
+		});
+
+		expect(is(signal)).is.true;
+		expect(is(signal, "get")).is.true;
+		// @ts-expect-error Just checking for writable being false
+		expect(is(signal, "set")).is.false;
+	});
+
+	it("should return true for writable computed signal", () => {
+		const signal = wrap({
+			get: () => {
+				return "";
+			},
+
+			set: () => {
+				// Ignore
+			},
+		});
+
+		expect(is(signal)).is.true;
+		expect(is(signal, "get")).is.true;
+		expect(is(signal, "set")).is.true;
 	});
 });

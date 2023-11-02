@@ -1,4 +1,5 @@
-import { get, is, set } from "@/compute";
+import type { ReadableSignal, WritableSignal } from "@/signal.types";
+import { is } from "@/signal";
 import {
 	STORE_SYMBOL,
 	type Store,
@@ -21,24 +22,27 @@ export const Stores = createContext<StoreContext<any>>({
  */
 export function store<T extends object>(instance: T): Store<T> {
 	return new Proxy(instance as Store<T>, {
-		get<Key extends keyof Store<T>>(target: Store<T>, p: string | symbol) {
+		get<Key extends keyof Store<T>, Value = Store<T>[Key]>(
+			target: Store<T>,
+			p: string | symbol,
+		) {
 			const key = p as Key;
-			const property = target[key];
-			if (is(property)) {
-				return get(property);
+			const property = target[key] as Value;
+			if (is<Value, ReadableSignal<Value>>(property, "get")) {
+				return property.get();
 			}
 			return property;
 		},
 
-		set<Key extends keyof Store<T>>(
+		set<Key extends keyof Store<T>, Value = Store<T>[Key]>(
 			target: Store<T>,
 			p: string | symbol,
-			newValue: Store<T>[Key],
+			newValue: Value,
 		) {
 			const key = p as Key;
-			const property = target[key];
-			if (is(property)) {
-				set(property, {
+			const property = target[key] as Value;
+			if (is<Value, WritableSignal<Value>>(property, "set")) {
+				property.set({
 					value: newValue,
 				});
 				return true;

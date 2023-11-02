@@ -12,16 +12,19 @@ export default defineConfig({
 	},
 	plugins: [solid()],
 	test: {
-		testTransformMode: { web: ["/.[jt]sx?$/"] },
+		testTransformMode: {
+			web: ["/.[jt]sx?$/"],
+		},
 		server: {
 			deps: {
-				inline: [/solid-js/],
-				// registerNodeLoader: false,
+				inline: [/solid-js/, /solid-testing-library/],
 			},
 		},
 		environment: "happy-dom",
 		restoreMocks: true,
+		globals: true,
 		coverage: {
+			enabled: true,
 			all: true,
 			provider: "v8",
 			include: ["src/**/*.ts"],

@@ -73,14 +73,34 @@ function signal<T>(initial?: T, id = Symbol()): WritableSignal<T | undefined> {
 	};
 }
 
+/**
+ * Creates a writable signal that optionally contains a value.
+ */
 export function wrap<T>(): WritableSignal<T | undefined>;
 
+/**
+ * Creates a writable signal that contains the respective value.
+ *
+ * @param initial The initial value to contain
+ */
 export function wrap<T>(initial: RawWrappedSignalInit<T>): WritableSignal<T>;
 
+/**
+ * Creates a readonly signal that reflects the value of the computation.
+ * This does not hold a value.
+ *
+ * @param initial The computational function to invoke
+ */
 export function wrap<T>(
 	initial: ReadableWrappedSignalInit<T>,
 ): ReadableSignal<T>;
 
+/**
+ * Creates a writable signal that proxies to the functions provided.
+ * This does not hold a value.
+ *
+ * @param initial The proxy functions to invoke.
+ */
 export function wrap<T>(
 	initial: WritableWrappedSignalInit<T>,
 ): WritableSignal<T>;
@@ -105,4 +125,34 @@ export function wrap<T>(
 	}
 
 	return signal();
+}
+
+/**
+ * Checks if a signal or value conforms to the signal specification.
+ * This is only the case if `SIGNAL_SYMBOL` is present and optionally a specific key (e.g. `set` or `get`).
+ *
+ * @param signal The signal to check for
+ * @param key Check for a specific function to be present (double checking).
+ * @returns If a signal meets the requirements
+ */
+export function is<
+	T,
+	Signal extends
+		| WritableSignal<unknown>
+		| ReadableSignal<unknown> = T extends WritableSignal<infer R>
+		? WritableSignal<R>
+		: T extends ReadableSignal<infer R>
+		? ReadableSignal<R>
+		: WritableSignal<T> | ReadableSignal<T>,
+>(signal: T | Signal, key?: keyof Signal): signal is Signal {
+	if (signal === null || signal === undefined) {
+		return false;
+	}
+	if (typeof signal !== "object") {
+		return false;
+	}
+	if (SIGNAL_SYMBOL in signal) {
+		return key === undefined || key in signal;
+	}
+	return false;
 }
