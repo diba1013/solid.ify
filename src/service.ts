@@ -1,8 +1,4 @@
-import type {
-	ResolvedServiceContext,
-	Service,
-	ServiceContext,
-} from "@/service.types";
+import type { ResolvedServiceContext, Service, ServiceContext } from "@/service.types";
 import { wrap } from "@/signal";
 import { store } from "@/store";
 import { uid } from "@/uuid.util";
@@ -28,18 +24,15 @@ function build<T, R>(
 	refetching: RefetchingServiceContext<T> | boolean,
 	last?: R,
 ): ResolvedServiceContext<T, R> {
-	const {
-		context: { id = uid(), data } = context,
-		refetching: reload,
-	}: PartiallyResolvedServiceContext<T> =
+	const { context: { id = uid(), data } = context, refetching: reload }: PartiallyResolvedServiceContext<T> =
 		typeof refetching === "boolean"
 			? {
 					refetching,
-			  }
+				}
 			: {
 					context: refetching.context,
 					refetching: true,
-			  };
+				};
 
 	const { signal } = new AbortController();
 	return {
@@ -59,11 +52,7 @@ export function useService<T, R>(id: string, service: Service<T, R>) {
 		resolved = resolve;
 	});
 
-	const [resource, actions] = createResource<
-		R,
-		IntermediateServiceContext<T>,
-		RefetchingServiceContext<T>
-	>(
+	const [resource, actions] = createResource<R, IntermediateServiceContext<T>, RefetchingServiceContext<T>>(
 		() => {
 			return {
 				context: service.data(),

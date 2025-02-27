@@ -30,7 +30,12 @@ const App: Component = () => {
 
 	return (
 		<>
-			<div data-testid="test" onClick={() => cut.change("John")}>
+			<div
+				data-testid="test"
+				onClick={() => {
+					cut.change("John");
+				}}
+			>
 				{cut.greeting}
 			</div>
 		</>

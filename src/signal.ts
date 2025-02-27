@@ -21,10 +21,7 @@ function update<T>(setter: WritableSignalSetter<T>, previous?: T): T {
 	return previous as T;
 }
 
-function write<T>(
-	write: WritableWrappedSignalInit<T>,
-	id = Symbol(),
-): WritableSignal<T> {
+function write<T>(write: WritableWrappedSignalInit<T>, id = Symbol()): WritableSignal<T> {
 	return {
 		[SIGNAL_SYMBOL]: id,
 
@@ -41,10 +38,7 @@ function write<T>(
 	};
 }
 
-function read<T>(
-	write: ReadableWrappedSignalInit<T>,
-	id = Symbol(),
-): ReadableSignal<T> {
+function read<T>(write: ReadableWrappedSignalInit<T>, id = Symbol()): ReadableSignal<T> {
 	return {
 		[SIGNAL_SYMBOL]: id,
 
@@ -91,19 +85,16 @@ export function wrap<T>(initial: RawWrappedSignalInit<T>): WritableSignal<T>;
  *
  * @param initial The computational function to invoke
  */
-export function wrap<T>(
-	initial: ReadableWrappedSignalInit<T>,
-): ReadableSignal<T>;
+export function wrap<T>(initial: ReadableWrappedSignalInit<T>): ReadableSignal<T>;
 
 /**
  * Creates a writable signal that proxies to the functions provided.
  * This does not hold a value.
  *
- * @param initial The proxy functions to invoke.
+ * @param proxy The proxy functions to invoke.
  */
-export function wrap<T>(
-	initial: WritableWrappedSignalInit<T>,
-): WritableSignal<T>;
+// eslint-disable-next-line @typescript-eslint/unified-signatures
+export function wrap<T>(proxy: WritableWrappedSignalInit<T>): WritableSignal<T>;
 
 export function wrap<T>(
 	initial?: WrappedSignalInit<T>,
@@ -137,13 +128,11 @@ export function wrap<T>(
  */
 export function is<
 	T,
-	Signal extends
-		| WritableSignal<unknown>
-		| ReadableSignal<unknown> = T extends WritableSignal<infer R>
+	Signal extends WritableSignal<unknown> | ReadableSignal<unknown> = T extends WritableSignal<infer R>
 		? WritableSignal<R>
 		: T extends ReadableSignal<infer R>
-		? ReadableSignal<R>
-		: WritableSignal<T> | ReadableSignal<T>,
+			? ReadableSignal<R>
+			: WritableSignal<T> | ReadableSignal<T>,
 >(signal: T | Signal, key?: keyof Signal): signal is Signal {
 	if (signal === null || signal === undefined) {
 		return false;

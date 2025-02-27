@@ -1,12 +1,6 @@
 import type { ReadableSignal, WritableSignal } from "@/signal.types";
 import { is } from "@/signal";
-import {
-	STORE_SYMBOL,
-	type Store,
-	type StoreContext,
-	type StoreFactory,
-	type StoreFunction,
-} from "@/store.types";
+import { type Store, STORE_SYMBOL, type StoreContext, type StoreFactory, type StoreFunction } from "@/store.types";
 import { createContext, useContext } from "solid-js";
 
 // This is fine since we do not want to break type restrictions
@@ -22,10 +16,9 @@ export const Stores = createContext<StoreContext<any>>({
  */
 export function store<T extends object>(instance: T): Store<T> {
 	return new Proxy(instance as Store<T>, {
-		get<Key extends keyof Store<T>, Value = Store<T>[Key]>(
-			target: Store<T>,
-			p: string | symbol,
-		) {
+		// Declaring type mapping aids in readability as this rule is not able to correctly capture inlining causing duplications.
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+		get<Key extends keyof Store<T>, Value = Store<T>[Key]>(target: Store<T>, p: string | symbol) {
 			const key = p as Key;
 			const property = target[key] as Value;
 			if (is<Value, ReadableSignal<Value>>(property, "get")) {
@@ -34,11 +27,9 @@ export function store<T extends object>(instance: T): Store<T> {
 			return property;
 		},
 
-		set<Key extends keyof Store<T>, Value = Store<T>[Key]>(
-			target: Store<T>,
-			p: string | symbol,
-			newValue: Value,
-		) {
+		// Declaring type mapping aids in readability as this rule is not able to correctly capture inlining causing duplications.
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+		set<Key extends keyof Store<T>, Value = Store<T>[Key]>(target: Store<T>, p: string | symbol, newValue: Value) {
 			const key = p as Key;
 			const property = target[key] as Value;
 			if (is<Value, WritableSignal<Value>>(property, "set")) {
@@ -62,7 +53,7 @@ export function defineStore<Context extends object, T extends object>(
 			cxt[STORE_SYMBOL] = {};
 		}
 		// Casting might be fine, but cannot verify at this point
-		const context = cxt.context as Context;
+		const context = cxt.context as Context | undefined;
 		if (context === undefined) {
 			console.warn("Use <Stores.Provider> to provide context.");
 		}
@@ -70,7 +61,7 @@ export function defineStore<Context extends object, T extends object>(
 		if (stores[id] === undefined) {
 			try {
 				// This is now a store wrapper
-				const instance = factory(context) as Store<T>;
+				const instance = factory(context ?? ({} as Context)) as Store<T>;
 				stores[id] = store(instance);
 			} catch (error) {
 				console.error(`Could not instantiate store '${id}'.`, error);

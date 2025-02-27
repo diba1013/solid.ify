@@ -20,10 +20,7 @@ export type Service<T, R> = {
 
 	init?: () => R;
 
-	recover?: (
-		context: ResolvedServiceContext<T, R>,
-		error?: unknown,
-	) => MaybePromise<R>;
+	recover?: (context: ResolvedServiceContext<T, R>, error?: unknown) => MaybePromise<R>;
 
 	cancel?: (context: ResolvedServiceContext<T, R>) => MaybePromise<void>;
 };

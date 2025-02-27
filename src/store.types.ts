@@ -16,36 +16,27 @@ export type ComputedKeys<Store extends object> = LooksLike<
 	ReadableSignal<any> // Ignore generic
 >;
 
-export type RetainKeys<Store extends object> = Exclude<
-	keyof Store,
-	StateKeys<Store> | ComputedKeys<Store>
->;
+export type RetainKeys<Store extends object> = Exclude<keyof Store, StateKeys<Store> | ComputedKeys<Store>>;
 
 export type StoreState<Store extends object> = {
-	[K in StateKeys<Store>]: Store[K] extends WritableSignal<infer R>
-		? R
-		: never;
+	[K in StateKeys<Store>]: Store[K] extends WritableSignal<infer R> ? R : never;
 };
 
 export type StoreGetters<Store extends object> = Readonly<{
-	[K in ComputedKeys<Store>]: Store[K] extends ReadableSignal<infer R>
-		? R
-		: never;
+	[K in ComputedKeys<Store>]: Store[K] extends ReadableSignal<infer R> ? R : never;
 }>;
 
 export type StoreActions<Store extends object> = Readonly<{
 	[K in RetainKeys<Store>]: Store[K];
 }>;
 
-export type Store<Store extends object> = StoreState<Store> &
-	StoreGetters<Store> &
-	StoreActions<Store>;
+export type Store<Store extends object> = StoreState<Store> & StoreGetters<Store> & StoreActions<Store>;
 
 export const STORE_SYMBOL = Symbol("solid:store");
 
 export type StoreContext<Context extends object> = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[STORE_SYMBOL]?: Record<string, Store<any>>;
+	[STORE_SYMBOL]?: Partial<Record<string, Store<any>>>;
 
 	context: Context;
 };
