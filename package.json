@@ -1,8 +1,10 @@
 {
-	"name": "@diba1013/solid",
+	"name": "@diba1013/solidified",
 	"version": "0.0.1",
-	"description": "A high level reactive wrapper around solid-js",
-	"keywords": [],
+	"description": "A high level reactive wrapper around solid.js",
+	"keywords": [
+		"solid"
+	],
 	"license": "MIT",
 	"repository": {
 		"type": "git",
