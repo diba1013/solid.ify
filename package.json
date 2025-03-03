@@ -30,12 +30,16 @@
 		"build": "tscz",
 		"build:watch": "tscz --watch",
 		"test": "vitest run",
+		"test:types": "vitest run",
 		"test:watch": "vitest",
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix ."
 	},
 	"peerDependencies": {
 		"solid-js": ">=1.0"
+	},
+	"dependencies": {
+		"hexoid": "^2.0.0"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^19.7.1",
