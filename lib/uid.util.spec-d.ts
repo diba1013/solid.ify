@@ -1,4 +1,4 @@
-import { uid } from "@/uid.util";
+import { uid } from "~/uid.util";
 import { describe, expectTypeOf, it } from "vitest";
 
 describe("uid", () => {

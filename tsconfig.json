@@ -6,16 +6,8 @@
 		"jsxImportSource": "solid-js",
 		"lib": ["ES2020", "DOM", "DOM.Iterable"],
 		"paths": {
-			"@/*": ["src/*"]
+			"~/*": ["lib/*"]
 		}
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx",
-		"test/**/*.ts",
-		"test/**/*.tsx",
-		"tscz.config.ts",
-		"vitest.config.ts",
-		"test/store.spec.tsx"
-	]
+	"include": ["lib/**/*.ts", "lib/**/*.tsx", "tscz.config.ts", "vitest.config.ts", "lib/store.spec.tsx"]
 }

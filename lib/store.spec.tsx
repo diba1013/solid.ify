@@ -1,5 +1,5 @@
-import { wrap } from "@/signal";
-import { Stores, defineStore } from "@/store";
+import { wrap } from "~/signal";
+import { Stores, defineStore } from "~/store";
 import { cleanup, render } from "@solidjs/testing-library";
 import { Component } from "solid-js";
 import { afterEach, describe, expect, it } from "vitest";

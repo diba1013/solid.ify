@@ -1,5 +1,5 @@
-import { is, wrap } from "@/signal";
-import { ReadableSignal, WritableSignal } from "@/signal.types";
+import { is, wrap } from "~/signal";
+import { RawWrappedSignalInit, ReadableSignal, WritableSignal, WritableSignalSetter } from "~/signal.types";
 import { describe, expect, it } from "vitest";
 
 describe("wrap", () => {
@@ -57,6 +57,55 @@ describe("wrap", () => {
 
 		expect(proxy.value).is.eq("1");
 		expect(cut.get()).is.eq("1");
+
+		cut.set({
+			get: (a = "") => a + "2",
+		});
+	});
+
+	it("with writable computed value should invoke update methods", () => {
+		const proxy: RawWrappedSignalInit<string | undefined> = {
+			value: undefined,
+		};
+
+		const cut = wrap({
+			get(): string | undefined {
+				return proxy.value;
+			},
+
+			set(value: string) {
+				proxy.value = value;
+			},
+		});
+
+		cut.set({ get: (a = "") => a + "1" });
+		expect(proxy.value).is.eq("1");
+
+		cut.set({ get: (a = "") => a + "2" });
+		expect(proxy.value).is.eq("12");
+
+		cut.set({} as WritableSignalSetter<string | undefined>);
+		expect(proxy.value).is.eq("12");
+	});
+
+	it("with writable computed value should not invoke invalid update method", () => {
+		const proxy: RawWrappedSignalInit<string> = {
+			value: "0",
+		};
+
+		const cut = wrap({
+			get(): string {
+				return proxy.value;
+			},
+
+			set(value: string) {
+				proxy.value = value;
+			},
+		});
+
+		cut.set({} as WritableSignalSetter<string>);
+		expect(proxy.value).is.eq("0");
+		expect(cut.get()).is.eq("0");
 	});
 
 	it("with readable computed value should invoke methods", () => {
@@ -79,6 +128,9 @@ describe("is", () => {
 		expect(is("")).is.false;
 		expect(is("1")).is.false;
 		expect(is(0)).is.false;
+		expect(is(undefined)).is.false;
+		// eslint-disable-next-line unicorn/no-null
+		expect(is(null)).is.false;
 	});
 
 	it("should return false without proper signal symbol", () => {
@@ -141,5 +193,11 @@ describe("is", () => {
 		expect(is(signal)).is.true;
 		expect(is(signal, "get")).is.true;
 		expect(is(signal, "set")).is.true;
+	});
+
+	it("should return true for incompatible data object", () => {
+		const cut = wrap({} as { value: string });
+
+		expect(is(cut, "set")).to.be.true;
 	});
 });

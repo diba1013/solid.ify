@@ -20,10 +20,13 @@
 	"files": [
 		"dist"
 	],
+	"imports": {
+		"#lib/*": "./lib/*.ts"
+	},
 	"exports": {
-		"types": "./dist/index.d.ts",
-		"import": "./dist/index.js",
-		"require": "./dist/index.cjs"
+		"types": "./dist/library.d.ts",
+		"import": "./dist/library.js",
+		"require": "./dist/library.cjs"
 	},
 	"scripts": {
 		"prepare": "husky",

@@ -1,6 +1,6 @@
-import type { ReadableSignal, WritableSignal } from "@/signal.types";
-import { is } from "@/signal";
-import { type Store, STORE_SYMBOL, type StoreContext, type StoreFactory, type StoreFunction } from "@/store.types";
+import type { ReadableSignal, WritableSignal } from "~/signal.types";
+import { is } from "~/signal";
+import { type Store, STORE_SYMBOL, type StoreContext, type StoreFactory, type StoreFunction } from "~/store.types";
 import { createContext, useContext } from "solid-js";
 
 // This is fine since we do not want to break type restrictions

@@ -1,4 +1,4 @@
-import { wrap } from "@/signal";
+import { wrap } from "~/library";
 import { cleanup, renderHook } from "@solidjs/testing-library";
 import { createEffect } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";

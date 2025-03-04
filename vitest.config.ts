@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
 	resolve: {
 		alias: {
-			"@": "/src",
+			"~/": "/lib/",
 		},
 	},
 	build: {
@@ -27,8 +27,7 @@ export default defineConfig({
 			enabled: true,
 			all: true,
 			provider: "v8",
-			include: ["src/**/*.ts"],
-			exclude: ["src/**/*.types.ts"],
+			include: ["lib/**/*.ts"],
 			reporter: ["html", "text-summary", "lcovonly"],
 		},
 		typecheck: {
