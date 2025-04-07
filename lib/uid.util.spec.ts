@@ -1,8 +1,10 @@
 import { uid } from "~/uid.util";
-import { describe, expectTypeOf, it } from "vitest";
+import { describe, it } from "vitest";
 
 describe("uid", () => {
-	it("should retain the proper length between updates to ensure collision statistics", () => {
-		expectTypeOf(uid).toEqualTypeOf<() => string>();
+	it("should retain the proper length between updates to ensure collision statistics", ({ expect }) => {
+		const result = uid();
+
+		expect(result).to.have.length(7);
 	});
 });
