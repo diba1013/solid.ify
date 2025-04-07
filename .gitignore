@@ -7,3 +7,4 @@
 
 *.tgz
 .eslintcache
+tsconfig.vitest-temp.json
