@@ -1,13 +1,13 @@
-import {
+import type {
 	RawWrappedSignalInit,
 	ReadableSignal,
 	ReadableWrappedSignalInit,
-	SIGNAL_SYMBOL,
 	WrappedSignalInit,
 	WritableSignal,
 	WritableSignalSetter,
 	WritableWrappedSignalInit,
 } from "./signal.types";
+import { SIGNAL_SYMBOL } from "./signal.types";
 import { createSignal } from "solid-js";
 
 function update<T>(setter: WritableSignalSetter<T>, previous?: T): T {
