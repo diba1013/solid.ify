@@ -1,6 +1,6 @@
 {
 	"name": "@diba1013/solid.ify",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "A high level reactive wrapper around solid.js",
 	"keywords": [
 		"solid"
